@@ -33,32 +33,17 @@ class Game():
     screen = None
     running = True
 
+    def initialize_game(self):
 
-    def __init__(self, width,  height, fps, title, vis_x_points, vis_y_points, vis_x_cor, vis_y_cor, vis_pixel_size, display_visualization=True):
+        # Keep track of if the game is over
+        self.lost = False
 
-        # Initialize pygame
-        pygame.init()
-
-        # Set window title
-        pygame.display.set_caption(title)
-
-        # Save width and height
-        self.width = width
-        self.height = height
-
-        # Create the screen
-        self.screen = pygame.display.set_mode([width, height])
-        
-        # Set font that we will use
-        self.font = pygame.font.SysFont("Arial", 18)
-
-        # Create player
-        self.player = Player(75, 75, (width-75)/2, (height-75)/2, 10)
-
-        # Setup FPS clock
-        self.fps = fps
+        # Setup resetable part of fps clock
         self.clock = pygame.time.Clock()
         self.delta_time = 1
+
+        # Create player
+        self.player = Player(75, 75, (self.width-75)/2, (self.height-75)/2, 10)
 
         # Setup Score
         self.score = 0
@@ -76,6 +61,34 @@ class Game():
         # Adding enemies group for collision checking
         self.enemies = pygame.sprite.Group()
 
+    def reset(self):
+        # Re-initializes the game
+        self.initialize_game()
+
+    def __init__(self, width,  height, fps, title, vis_x_points, vis_y_points, vis_x_cor, vis_y_cor, vis_pixel_size, display_visualization=True):
+
+        # Initialize pygame
+        pygame.init()
+
+        # Keep track of game number
+        self.game_num = 0
+
+        # Set window title
+        pygame.display.set_caption(title)
+
+        # Save width and height
+        self.width = width
+        self.height = height
+
+        # Create the screen
+        self.screen = pygame.display.set_mode([width, height])
+        
+        # Set font that we will use
+        self.font = pygame.font.SysFont("Arial", 18)
+
+        # FPS setting
+        self.fps = fps
+        
         # Adding visualization
 
         self.display_visualization = display_visualization
@@ -90,23 +103,36 @@ class Game():
         self.visualization = Visualization(self)
         self.visualization_data = self.visualization.get_data(self)
 
+
+        # Initializes the game
+        self.initialize_game()
+
         # Run the game
         self.run()
 
     def run(self):
+
         while(self.running):
 
-            # Updates the events
-            self.update()
+            self.game_num += 1
 
-            # Updates the screen
-            self.paint()
+            while(not self.lost and self.running):
 
-            # slow game down to desired fps
-            self.delta_time = self.clock.tick(self.fps)
+                # Updates the events
+                self.update()
 
-            # add delta time to enemy event counter
-            self.enemy_time_counter += self.measured_fps
+                # Updates the screen
+                self.paint()
+
+                # slow game down to desired fps
+                self.delta_time = self.clock.tick(self.fps)
+
+                # add delta time to enemy event counter
+                self.enemy_time_counter += self.measured_fps
+
+            print("#######################")
+            print(f"Game {self.game_num}: {self.score}")
+            self.reset()
 
         # game finished!
         pygame.quit()
@@ -151,8 +177,7 @@ class Game():
         # Check if there was any entity collisions
         if pygame.sprite.spritecollideany(self.player, self.enemies):
             # If yes, game over!
-            self.player.kill()
-            self.running = False
+            self.lost = True
         else:
             # Add to score!
             self.score+=self.SCORE_INCREMENT
@@ -213,4 +238,3 @@ class Game():
 if __name__ == "__main__":
     global gameInstance
     gameInstance = Game(1280, 720, 60, "Simple Ai Game", int(1280/10), int(720/10), 100, 10, 1, display_visualization=True)
-    print(gameInstance.score)
