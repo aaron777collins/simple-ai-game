@@ -49,7 +49,7 @@ class Game():
         self.SCORE_INCREMENT = 1
 
         # Adding enemy event
-        self.SCORE_BETWEEN_ENEMIES = 20
+        self.SCORE_BETWEEN_ENEMIES = 15
         self.ADD_ENEMY_EVENT_NUM = pygame.USEREVENT + 1
 
         # Adding all_sprites group for rendering

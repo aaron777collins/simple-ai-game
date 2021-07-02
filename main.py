@@ -108,9 +108,9 @@ def collect_data(env, policy, buffer, steps):
 
 if __name__ == "__main__":
     global gameInstance
-    gameInstance_train = Game(1280, 720, 60, "Simple Ai Game", int(1280/10), int(720/10), 100, 10, 1, display_visualization=True, slow_down_game=True)
+    gameInstance_train = Game(1280, 720, 60, "Simple Ai Game", int(1280/10), int(720/10), 100, 10, 1, display_visualization=True, slow_down_game=False)
 
-    gameInstance_eval = Game(1280, 720, 60, "Simple Ai Game", int(1280/10), int(720/10), 100, 10, 1, display_visualization=True, slow_down_game=True)
+    gameInstance_eval = Game(1280, 720, 60, "Simple Ai Game", int(1280/10), int(720/10), 100, 10, 1, display_visualization=True, slow_down_game=False)
 
     environment_train = tf_py_environment.TFPyEnvironment(Environment(gameInstance_train))
     environment_eval = tf_py_environment.TFPyEnvironment(Environment(gameInstance_eval))
@@ -130,6 +130,7 @@ if __name__ == "__main__":
     # print('Next time step:')
     # print(next_time_step)
 
+    # fc_layer_params = (100, 50)
     fc_layer_params = (100, 50)
     action_tensor_spec = tensor_spec.from_spec(environment_train.action_spec())
     num_actions = action_tensor_spec.maximum - action_tensor_spec.minimum + 1
@@ -196,10 +197,10 @@ if __name__ == "__main__":
 
     # Added settings
     num_eval_episodes = 1
-    num_iterations = 50
-    collect_steps_per_iteration = 200
+    num_iterations = 100
+    collect_steps_per_iteration = 400
 
-    log_interval = 10
+    log_interval = 1
     eval_interval = 10
 
     # try:
@@ -216,6 +217,8 @@ if __name__ == "__main__":
     # Evaluate the agent's policy once before training.
     avg_return = compute_avg_return(environment_train, agent.policy, num_eval_episodes)
     returns = [avg_return]
+
+    max_return = 0
 
     for _ in range(num_iterations):
 
@@ -235,14 +238,21 @@ if __name__ == "__main__":
             avg_return = compute_avg_return(environment_eval, agent.policy, num_eval_episodes)
             print('step = {0}: Average Return = {1}'.format(step, avg_return))
             returns.append(avg_return)
+            max_return = (max_return, avg_return)[avg_return>max_return]
 
 
+    environment_train.close()
+    environment_eval.close()
         
     iterations = range(0, num_iterations + 1, eval_interval)
     print(iterations)
+    print(returns)
     plt.plot(iterations, returns)
     plt.ylabel('Average Return')
     plt.xlabel('Iterations')
-    plt.ylim(top=250)
+    plt.ylim(top=max_return)
+    plt.show()
+
+
 
     # ##############################################

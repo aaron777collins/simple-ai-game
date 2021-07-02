@@ -22,7 +22,7 @@ flatten = itertools.chain.from_iterable
 
 tf.compat.v1.enable_v2_behavior()
 
-MAX_GAMES = 2
+MAX_GAMES = 3
 
 def flatten_to_list(_2dlist):
         return list(flatten(_2dlist))

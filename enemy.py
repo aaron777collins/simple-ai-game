@@ -36,4 +36,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def check_bounds(self, game):
         if self.rect.right < 0:
-            self.kill()
+            try:
+                self.kill()
+            except:
+                print("error killing rect")
