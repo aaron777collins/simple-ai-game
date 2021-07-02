@@ -11,6 +11,7 @@ from pygame.locals import (
 )
 
 PLAYER_COLOR = pygame.Color("white")
+DO_NOTHING_ACTION = 8
 
 from pygame import Surface
 class Player(pygame.sprite.Sprite):
@@ -23,15 +24,39 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = y
         self.speed = speed
 
-    def update(self, pressed_keys, game):
-        if pressed_keys[K_UP]:
-            self.rect.move_ip(0, -self.speed)
-        if pressed_keys[K_DOWN]:
-            self.rect.move_ip(0, self.speed)
-        if pressed_keys[K_LEFT]:
-            self.rect.move_ip(-self.speed, 0)
-        if pressed_keys[K_RIGHT]:
-            self.rect.move_ip(self.speed, 0)
+    # def update(self, pressed_keys, game):
+    #     if pressed_keys[K_UP]:
+    #         self.rect.move_ip(0, -self.speed)
+    #     if pressed_keys[K_DOWN]:
+    #         self.rect.move_ip(0, self.speed)
+    #     if pressed_keys[K_LEFT]:
+    #         self.rect.move_ip(-self.speed, 0)
+    #     if pressed_keys[K_RIGHT]:
+    #         self.rect.move_ip(self.speed, 0)
+
+    #     self.check_bounds(game)
+
+
+    def update(self, action, game):
+
+        if action == 0:
+            self.rect.move_ip(-self.speed, -self.speed)
+        elif action == 1:
+            self.rect.move_ip(0, -self.speed),
+        elif action == 2:
+            self.rect.move_ip(self.speed, -self.speed),
+        elif action == 3:
+            self.rect.move_ip(self.speed, 0),
+        elif action == 4:
+            self.rect.move_ip(self.speed, self.speed),
+        elif action == 5:
+            self.rect.move_ip(0, self.speed),
+        elif action == 6:
+            self.rect.move_ip(-self.speed, self.speed),
+        elif action == 7:
+            self.rect.move_ip(-self.speed, 0),
+        elif action == DO_NOTHING_ACTION:
+            pass
 
         self.check_bounds(game)
 

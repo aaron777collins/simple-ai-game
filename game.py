@@ -2,12 +2,11 @@ from visualizationSprite import VisualizationSprite
 from visualization import PLAYER_NUM, ENEMY_NUM, Visualization
 from enemy import ENEMY_COLOR, Enemy
 from pygame import surface
-from depencencies import installAll
-# Installs dependencies if they haven't been installed yet
-installAll() 
 
 import pygame
-from player import PLAYER_COLOR, Player
+from player import DO_NOTHING_ACTION, PLAYER_COLOR, Player
+
+from environment import Environment
 
 from pygame.locals import (
     K_UP,
@@ -50,8 +49,7 @@ class Game():
         self.SCORE_INCREMENT = 1
 
         # Adding enemy event
-        self.enemy_time_counter = 0
-        self.TIME_BETWEEN_ENEMIES = 1000
+        self.SCORE_BETWEEN_ENEMIES = 20
         self.ADD_ENEMY_EVENT_NUM = pygame.USEREVENT + 1
 
         # Adding all_sprites group for rendering
@@ -65,13 +63,16 @@ class Game():
         # Re-initializes the game
         self.initialize_game()
 
-    def __init__(self, width,  height, fps, title, vis_x_points, vis_y_points, vis_x_cor, vis_y_cor, vis_pixel_size, display_visualization=True):
+    def __init__(self, width,  height, fps, title, vis_x_points, vis_y_points, vis_x_cor, vis_y_cor, vis_pixel_size, display_visualization=True, slow_down_game=True):
 
         # Initialize pygame
         pygame.init()
 
         # Keep track of game number
         self.game_num = 0
+
+        # Slow down the game
+        self.slow_down_game = slow_down_game
 
         # Set window title
         pygame.display.set_caption(title)
@@ -87,7 +88,7 @@ class Game():
         self.font = pygame.font.SysFont("Arial", 18)
 
         # FPS setting
-        self.fps = fps
+        self.fps = (-1, fps)[self.slow_down_game]
         
         # Adding visualization
 
@@ -103,45 +104,36 @@ class Game():
         self.visualization = Visualization(self)
         self.visualization_data = self.visualization.get_data(self)
 
+        # # Initialize AI Agent
+        # self.environment = Environment(self)
 
         # Initializes the game
         self.initialize_game()
 
-        # Run the game
-        self.run()
+        # Run the game (do nothing)
+        self.run(DO_NOTHING_ACTION) 
 
-    def run(self):
+    def run(self, action):
 
-        while(self.running):
+        if (not self.lost):
 
-            self.game_num += 1
+            # Updates the events
+            self.update(action)
 
-            while(not self.lost and self.running):
+            # Updates the screen
+            self.paint()
 
-                # Updates the events
-                self.update()
+            # # Wait for agent to make its move
+            # self.environment.step(self)
 
-                # Updates the screen
-                self.paint()
+        if(not self.running):
+            # game finished!
+            pygame.quit()
 
-                # slow game down to desired fps
-                self.delta_time = self.clock.tick(self.fps)
-
-                # add delta time to enemy event counter
-                self.enemy_time_counter += self.measured_fps
-
-            print("#######################")
-            print(f"Game {self.game_num}: {self.score}")
-            self.reset()
-
-        # game finished!
-        pygame.quit()
-
-    def update(self):
+    def update(self, action):
 
         # check if enemy event should be triggered
-        if (self.enemy_time_counter >= self.TIME_BETWEEN_ENEMIES):
-            self.enemy_time_counter = 0
+        if (self.score % self.SCORE_BETWEEN_ENEMIES == 0):
             pygame.event.post(pygame.event.Event(self.ADD_ENEMY_EVENT_NUM, message="Enemy Added!"))
 
         for event in pygame.event.get():
@@ -163,12 +155,14 @@ class Game():
                     self.enemies.add(new_enemy)
                     self.all_sprites.add(new_enemy)
 
-        # Get all keys that are currently pressed
-        pressed_keys = pygame.key.get_pressed()
+        # # Get all keys that are currently pressed
+        # pressed_keys = pygame.key.get_pressed()
 
 
-        # move player first
-        self.player.update(pressed_keys, self)
+        # # move player first
+        # self.player.update(pressed_keys, self)
+
+        self.player.update(action, self)
 
         # Update enemies
         for enemy in self.enemies:
@@ -235,6 +229,6 @@ class Game():
         
 
 
-if __name__ == "__main__":
-    global gameInstance
-    gameInstance = Game(1280, 720, 60, "Simple Ai Game", int(1280/10), int(720/10), 100, 10, 1, display_visualization=True)
+# if __name__ == "__main__":
+#     global gameInstance
+#     gameInstance = Game(1280, 720, 60, "Simple Ai Game", int(1280/10), int(720/10), 100, 10, 1, display_visualization=True, slow_down_game=True)

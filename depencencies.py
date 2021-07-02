@@ -29,6 +29,12 @@ def installAll():
         ensurepip.bootstrap()
 
     install("pygame")
+    install("tensorflow")
+    install("tf-agents")
+    install("imageio==2.4.0")
+    install("pyvirtualdisplay")
+    install("ipython")
+    install("matplotlib")
 
     print("\n\n########################################\nAll Dependencies Installed.\n")
 

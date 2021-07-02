@@ -1,7 +1,7 @@
 from enemy import ENEMY_COLOR
 from player import PLAYER_COLOR
 
-PLAYER_NUM = -1
+PLAYER_NUM = 0.5
 ENEMY_NUM = 1
 
 class Visualization():
@@ -16,10 +16,10 @@ class Visualization():
                 color = game.screen.get_at((i * int(game.width/game.vis_x_points),(j * int(game.height/game.vis_y_points))))                
 
                 if color == ENEMY_COLOR:
-                    self.data[i][j] = 1
+                    self.data[i][j] = ENEMY_NUM
 
                 if color == PLAYER_COLOR:
-                    self.data[i][j] = -1                    
+                    self.data[i][j] = PLAYER_NUM                  
 
         return self.data
 
