@@ -37,6 +37,10 @@ class Game():
         # Keep track of if the game is over
         self.lost = False
 
+        # Keep track of dead enemies
+        self.passed_enemies=False
+
+
         # Setup resetable part of fps clock
         self.clock = pygame.time.Clock()
         self.delta_time = 1
@@ -208,7 +212,6 @@ class Game():
                         pass
                     if (tmpObj != None):
                         self.screen.blit(tmpObj.surf, tmpObj.rect)
-
 
         # Flip buffer
         pygame.display.flip()

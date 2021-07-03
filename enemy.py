@@ -28,6 +28,7 @@ class Enemy(pygame.sprite.Sprite):
             )
         )
         self.speed = speed = random.uniform(min_speed, max_speed)
+        self.not_passed=True
 
     def update(self, game):
         self.rect.move_ip(-self.speed, 0)
@@ -40,3 +41,7 @@ class Enemy(pygame.sprite.Sprite):
                 self.kill()
             except:
                 print("error killing rect")
+
+        if self.not_passed and self.rect.right < game.player.rect.left:
+            self.not_passed=False
+            game.passed_enemies=True

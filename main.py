@@ -2,6 +2,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from os import environ
+import os
 from player import DO_NOTHING_ACTION
 
 from pygame import time
@@ -46,9 +47,16 @@ from tf_agents.replay_buffers import tf_uniform_replay_buffer
 from tf_agents.trajectories import trajectory
 from tf_agents.specs import tensor_spec
 from tf_agents.utils import common
+from tf_agents.policies import policy_saver
+from tf_agents.policies import py_tf_eager_policy
+from tf_agents.policies import random_tf_policy
 
 
-learning_rate = 0.01
+# IMPORTANT PARAMETER
+learning_rate = 0.001
+
+checkpoint_dir = os.path.join(__file__, 'checkpoint')
+policy_dir = os.path.join(__file__, 'policy')
 
 # Define a helper function to create Dense layers configured with the right
 # activation and kernel initializer.
@@ -131,7 +139,7 @@ if __name__ == "__main__":
     # print(next_time_step)
 
     # fc_layer_params = (100, 50)
-    fc_layer_params = (100, 50)
+    fc_layer_params = (100, 128)
     action_tensor_spec = tensor_spec.from_spec(environment_train.action_spec())
     num_actions = action_tensor_spec.maximum - action_tensor_spec.minimum + 1
 
@@ -173,7 +181,10 @@ if __name__ == "__main__":
 
     # print(compute_avg_return(environment_eval, random_policy, 3))
 
-    replay_buffer_max_length = 5
+
+# ######### replay buffer settings ############## 
+
+    replay_buffer_max_length = 100000
 
     replay_buffer = tf_uniform_replay_buffer.TFUniformReplayBuffer(
         data_spec=agent.collect_data_spec,
@@ -196,12 +207,11 @@ if __name__ == "__main__":
     # #############################################
 
     # Added settings
-    num_eval_episodes = 1
+    num_eval_episodes = 3
     num_iterations = 100
-    collect_steps_per_iteration = 400
-
+    collect_steps_per_iteration = 500
     log_interval = 1
-    eval_interval = 10
+    eval_interval = 5
 
     # try:
     #     # %%time
@@ -219,6 +229,26 @@ if __name__ == "__main__":
     returns = [avg_return]
 
     max_return = 0
+
+    # # Try to restore from checkpoint
+
+    # train_checkpointer = common.Checkpointer(
+    # ckpt_dir=checkpoint_dir,
+    # max_to_keep=1,
+    # agent=agent,
+    # policy=agent.policy,
+    # replay_buffer=replay_buffer,
+    # global_step=agent.train_step_counter.numpy()
+    # )
+    
+    # tf_policy_saver = policy_saver.PolicySaver(agent.policy)
+
+    # try:
+    #     train_checkpointer.initialize_or_restore()
+    #     tf_policy_saver = tf.compat.v2.saved_model.load(policy_dir)
+    # except:
+    #     print("Error restoring from checkpoint")
+
 
     for _ in range(num_iterations):
 
@@ -252,6 +282,14 @@ if __name__ == "__main__":
     plt.xlabel('Iterations')
     plt.ylim(top=max_return)
     plt.show()
+
+
+
+    # Save AI
+
+    # train_checkpointer.save(agent.train_step_counter.numpy())
+
+    # tf_policy_saver.save(policy_dir)
 
 
 
