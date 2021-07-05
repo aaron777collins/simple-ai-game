@@ -53,7 +53,7 @@ from tf_agents.policies import random_tf_policy
 
 
 # IMPORTANT PARAMETER
-learning_rate = 0.001
+learning_rate = 0.0001
 
 checkpoint_dir = os.path.join(__file__, 'checkpoint')
 policy_dir = os.path.join(__file__, 'policy')
@@ -116,9 +116,9 @@ def collect_data(env, policy, buffer, steps):
 
 if __name__ == "__main__":
     global gameInstance
-    gameInstance_train = Game(1280, 720, 60, "Simple Ai Game", int(1280/10), int(720/10), 100, 10, 1, display_visualization=True, slow_down_game=False)
+    gameInstance_train = Game(1280, 720, 60, "Simple Ai Game", int(1280/10), int(720/10), 100, 10, 1, display_visualization=True, slow_down_game=False, speed=5)
 
-    gameInstance_eval = Game(1280, 720, 60, "Simple Ai Game", int(1280/10), int(720/10), 100, 10, 1, display_visualization=True, slow_down_game=False)
+    gameInstance_eval = Game(1280, 720, 60, "Simple Ai Game", int(1280/10), int(720/10), 100, 10, 1, display_visualization=True, slow_down_game=False, speed=5)
 
     environment_train = tf_py_environment.TFPyEnvironment(Environment(gameInstance_train))
     environment_eval = tf_py_environment.TFPyEnvironment(Environment(gameInstance_eval))

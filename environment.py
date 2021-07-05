@@ -70,14 +70,14 @@ class Environment(py_environment.PyEnvironment):
 
         else:
 
-            if(self.game.player.rect.right > self.game.width/8*7
-            or self.game.player.rect.left < self.game.width/8
-            or self.game.player.rect.top < self.game.height/8
-            or self.game.player.rect.bottom > self.game.height/8*7):
-                # Nullify rewards
-                return ts.transition(
-                np.array(flatten_to_list(self.game.visualization_data), dtype=np.float), reward=0.05, discount=1.0
-                )
+            # if(self.game.player.rect.right > self.game.width/8*7
+            # or self.game.player.rect.left < self.game.width/8
+            # or self.game.player.rect.top < self.game.height/8
+            # or self.game.player.rect.bottom > self.game.height/8*7):
+            #     # Nullify rewards
+            #     return ts.transition(
+            #     np.array(flatten_to_list(self.game.visualization_data), dtype=np.float), reward=0.05, discount=1.0
+            #     )
 
             if(self.game.passed_enemies):
                 self.game.passed_enemies=False

@@ -46,7 +46,7 @@ class Game():
         self.delta_time = 1
 
         # Create player
-        self.player = Player(75, 75, (self.width-75)/2, (self.height-75)/2, 10)
+        self.player = Player(75, 75, (self.width-75)/2, (self.height-75)/2, 10*self.speed)
 
         # Setup Score
         self.score = 0
@@ -67,10 +67,12 @@ class Game():
         # Re-initializes the game
         self.initialize_game()
 
-    def __init__(self, width,  height, fps, title, vis_x_points, vis_y_points, vis_x_cor, vis_y_cor, vis_pixel_size, display_visualization=True, slow_down_game=True):
+    def __init__(self, width,  height, fps, title, vis_x_points, vis_y_points, vis_x_cor, vis_y_cor, vis_pixel_size, display_visualization=True, slow_down_game=True, speed=1):
 
         # Initialize pygame
         pygame.init()
+
+        self.speed = speed
 
         # Keep track of game number
         self.game_num = 0
@@ -155,7 +157,7 @@ class Game():
                 # check for adding enemy event
                 elif event.type == self.ADD_ENEMY_EVENT_NUM:
                     # Create enemy
-                    new_enemy = Enemy(40, 40, 5, 10, 20, 100, self)
+                    new_enemy = Enemy(40, 40, 5*self.speed, 10*self.speed, 20, 100, self)
                     self.enemies.add(new_enemy)
                     self.all_sprites.add(new_enemy)
 
