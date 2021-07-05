@@ -53,7 +53,7 @@ from tf_agents.policies import random_tf_policy
 
 
 # IMPORTANT PARAMETER
-learning_rate = 0.0001
+learning_rate = 0.00005
 
 checkpoint_dir = os.path.join(__file__, 'checkpoint')
 policy_dir = os.path.join(__file__, 'policy')
