@@ -48,8 +48,6 @@ from tf_agents.policies import py_tf_eager_policy
 from tf_agents.policies import random_tf_policy
 
 
-# IMPORTANT PARAMETERS
-learning_rate = 0.00005
 
 # IMPORTANT CONSTANTS
 policy_dir = os.path.join(os.getcwd(), 'policy')
@@ -118,7 +116,8 @@ class Trainer:
       collect_steps_per_iteration = 500,
       log_interval = 1,
       eval_interval = 5,
-      show_chart = False):
+      show_chart = False,
+      learning_rate=0.00005):
 
       self.gameInstance_train = Game(1280, 720, 60, "Simple Ai Game", int(1280/10), int(720/10), 100, 10, 1, display_visualization=True, slow_down_game=False, speed=5)
 
@@ -134,6 +133,10 @@ class Trainer:
       self.log_interval = log_interval
       self.eval_interval = eval_interval
       self.show_chart = show_chart
+
+      # IMPORTANT PARAMETERS
+      # learning_rate = 0.00005
+      self.learning_rate = learning_rate
 
       # utils.validate_py_environment(Environment(gameInstance_train), episodes=5)
       # print(isinstance(environment_train, tf_environment.TFEnvironment))
