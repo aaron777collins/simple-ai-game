@@ -52,11 +52,11 @@ from tf_agents.policies import py_tf_eager_policy
 from tf_agents.policies import random_tf_policy
 
 
-# IMPORTANT PARAMETER
+# IMPORTANT PARAMETERS
 learning_rate = 0.00005
 
-checkpoint_dir = os.path.join(__file__, 'checkpoint')
-policy_dir = os.path.join(__file__, 'policy')
+# IMPORTANT CONSTANTS
+policy_dir = os.path.join(os.getcwd(), 'policy')
 
 # Define a helper function to create Dense layers configured with the right
 # activation and kernel initializer.
@@ -172,11 +172,22 @@ if __name__ == "__main__":
     eval_policy = agent.policy
     collect_policy = agent.collect_policy
 
-    random_policy = random_tf_policy.RandomTFPolicy(environment_train.time_step_spec(), environment_train.action_spec())
 
-    time_step = environment_train.reset()
+    # Initialize policy saver
+    tf_policy_saver = policy_saver.PolicySaver(agent.policy)
 
-    random_policy.action(time_step)
+    try:
+      saved_policy = tf.compat.v2.saved_model.load(policy_dir)
+      print(f"Found a policy at {policy_dir}")
+    except:
+      print("No policy found! Generating random policy instead.")
+
+    # random_policy = random_tf_policy.RandomTFPolicy(environment_train.time_step_spec(), environment_train.action_spec())
+
+
+    # time_step = environment_train.reset()
+
+    # random_policy.action(time_step)
 
 
     # print(compute_avg_return(environment_eval, random_policy, 3))
@@ -208,7 +219,7 @@ if __name__ == "__main__":
 
     # Added settings
     num_eval_episodes = 3
-    num_iterations = 100
+    num_iterations = 5
     collect_steps_per_iteration = 500
     log_interval = 1
     eval_interval = 5
@@ -229,25 +240,6 @@ if __name__ == "__main__":
     returns = [avg_return]
 
     max_return = 0
-
-    # # Try to restore from checkpoint
-
-    # train_checkpointer = common.Checkpointer(
-    # ckpt_dir=checkpoint_dir,
-    # max_to_keep=1,
-    # agent=agent,
-    # policy=agent.policy,
-    # replay_buffer=replay_buffer,
-    # global_step=agent.train_step_counter.numpy()
-    # )
-    
-    # tf_policy_saver = policy_saver.PolicySaver(agent.policy)
-
-    # try:
-    #     train_checkpointer.initialize_or_restore()
-    #     tf_policy_saver = tf.compat.v2.saved_model.load(policy_dir)
-    # except:
-    #     print("Error restoring from checkpoint")
 
 
     for _ in range(num_iterations):
@@ -283,14 +275,8 @@ if __name__ == "__main__":
     plt.ylim(top=max_return)
     plt.show()
 
-
-
-    # Save AI
-
-    # train_checkpointer.save(agent.train_step_counter.numpy())
-
-    # tf_policy_saver.save(policy_dir)
-
-
+    # Saving policy
+    print("Saved policy to " + policy_dir)
+    tf_policy_saver.save(policy_dir)
 
     # ##############################################
