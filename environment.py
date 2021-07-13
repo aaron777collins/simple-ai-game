@@ -27,6 +27,9 @@ MAX_GAMES = 3
 def flatten_to_list(_2dlist):
         return list(flatten(_2dlist))
 
+def create_input_data(env):
+    return flatten_to_list(env.game.visualization_data) + (list([(float(env.game.player.rect.x) / env.game.width), (float(env.game.player.rect.y) / env.game.height)]))
+
 class Environment(py_environment.PyEnvironment):
     def __init__(self, game):
         self.game = game
@@ -34,7 +37,7 @@ class Environment(py_environment.PyEnvironment):
         self._action_spec = array_spec.BoundedArraySpec(
             shape=(), dtype=np.int32, minimum=0, maximum=8, name='action')
         self._observation_spec = array_spec.BoundedArraySpec(
-            shape=(len(flatten_to_list(self.game.visualization_data)),), dtype=np.float, minimum=0, maximum=1, name='observation'
+            shape=(len(create_input_data(self)),), dtype=np.float, minimum=0, maximum=1, name='observation'
         )
         self._game_count = 0
 
@@ -50,7 +53,7 @@ class Environment(py_environment.PyEnvironment):
     def _reset(self):
         self.game.reset()
         self._episode_ended = False
-        return ts.restart(np.array(flatten_to_list(self.game.visualization_data), dtype=np.float))
+        return ts.restart(np.array(create_input_data(self), dtype=np.float))
 
     def _step(self, action):
 
@@ -62,11 +65,18 @@ class Environment(py_environment.PyEnvironment):
             if(self._game_count >= MAX_GAMES):
                 self._game_count = 0
                 self._episode_ended = True
+                # return ts.termination(
+                #     np.array(create_input_data(self), dtype=np.float), reward=-1.0
+                # )
                 return ts.termination(
-                    np.array(flatten_to_list(self.game.visualization_data), dtype=np.float), reward=0.0
+                    np.array(create_input_data(self), dtype=np.float), reward=-float(self.game.score)/2
                 )
             else:
-                return self.reset()
+                # return self.reset()
+                self.reset()
+                return ts.termination(
+                    np.array(create_input_data(self), dtype=np.float), reward=-1.0
+                )
 
         else:
 
@@ -79,13 +89,17 @@ class Environment(py_environment.PyEnvironment):
             #     np.array(flatten_to_list(self.game.visualization_data), dtype=np.float), reward=0.05, discount=1.0
             #     )
 
-            if(self.game.passed_enemies):
-                self.game.passed_enemies=False
-                return ts.transition(
-                np.array(flatten_to_list(self.game.visualization_data), dtype=np.float), reward=1, discount=1.0
-                )
+            # if(self.game.passed_enemies):
+            #     self.game.passed_enemies=False
+            #     return ts.transition(
+            #     np.array(create_input_data(self), dtype=np.float), reward=1, discount=1.0
+            #     )
 
+
+            # return ts.transition(
+            #     np.array(create_input_data(self), dtype=np.float), reward=0.5, discount=1.0
+            # )
 
             return ts.transition(
-                np.array(flatten_to_list(self.game.visualization_data), dtype=np.float), reward=0.5, discount=1.0
+                np.array(create_input_data(self), dtype=np.float), reward=1.0, discount=1.0
             )

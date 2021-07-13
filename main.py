@@ -8,7 +8,7 @@ infinite_train = True
 
 if __name__ == "__main__":
 
-    trainer = Trainer(num_iterations=10)
+    trainer = Trainer(num_iterations=10, learning_rate=0.01)
 
     counter = 1
 

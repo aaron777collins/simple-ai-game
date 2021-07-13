@@ -154,7 +154,8 @@ class Trainer:
       # print(next_time_step)
 
       # fc_layer_params = (100, 50)
-      self.fc_layer_params = (100, 128)
+      # self.fc_layer_params = (100, 128)
+      self.fc_layer_params = (128, 128, 128)
       self.action_tensor_spec = tensor_spec.from_spec(self.environment_train.action_spec())
       self.num_actions = self.action_tensor_spec.maximum - self.action_tensor_spec.minimum + 1
 
