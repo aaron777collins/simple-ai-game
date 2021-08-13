@@ -19,7 +19,8 @@ class Visualization():
                     self.data[i][j] = ENEMY_NUM
 
                 if color == PLAYER_COLOR:
-                    self.data[i][j] = PLAYER_NUM                  
+                    self.data[i][j] = PLAYER_NUM    
+              
 
         return self.data
 

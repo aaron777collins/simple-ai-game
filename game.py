@@ -46,7 +46,7 @@ class Game():
         self.delta_time = 1
 
         # Create player
-        self.player = Player(75, 75, (self.width-75)/2, (self.height-75)/2, 10*self.speed)
+        self.player = Player(75*self.window_scale, 75*self.window_scale, (self.width-75)/2*self.window_scale, (self.height-75)/2*self.window_scale, 10*self.speed*self.window_scale)
 
         # Setup Score
         self.score = 0
@@ -67,10 +67,12 @@ class Game():
         # Re-initializes the game
         self.initialize_game()
 
-    def __init__(self, width,  height, fps, title, vis_x_points, vis_y_points, vis_x_cor, vis_y_cor, vis_pixel_size, display_visualization=True, slow_down_game=True, speed=1):
+    def __init__(self, width,  height, fps, title, vis_x_points, vis_y_points, vis_x_cor, vis_y_cor, vis_pixel_size, display_visualization=True, slow_down_game=True, speed=1, window_scale=1.0):
 
         # Initialize pygame
         pygame.init()
+
+        self.window_scale=window_scale
 
         self.speed = speed
 
@@ -84,14 +86,14 @@ class Game():
         pygame.display.set_caption(title)
 
         # Save width and height
-        self.width = width
-        self.height = height
+        self.width = int(width*self.window_scale)
+        self.height = int(height*self.window_scale)
 
         # Create the screen
-        self.screen = pygame.display.set_mode([width, height])
+        self.screen = pygame.display.set_mode([self.width, self.height])
         
         # Set font that we will use
-        self.font = pygame.font.SysFont("Arial", 18)
+        self.font = pygame.font.SysFont("Arial", int(18*self.window_scale))
 
         # FPS setting
         self.fps = (-1, fps)[self.slow_down_game]
@@ -103,9 +105,9 @@ class Game():
         self.vis_x_points = vis_x_points
         self.vis_y_points = vis_y_points
 
-        self.vis_x_cor = vis_x_cor
-        self.vis_y_cor = vis_y_cor
-        self.vis_pixel_size = vis_pixel_size
+        self.vis_x_cor = vis_x_cor*self.window_scale
+        self.vis_y_cor = vis_y_cor*self.window_scale
+        self.vis_pixel_size = max(vis_pixel_size*self.window_scale, 1)
 
         self.visualization = Visualization(self)
         self.visualization_data = self.visualization.get_data(self)
@@ -157,7 +159,7 @@ class Game():
                 # check for adding enemy event
                 elif event.type == self.ADD_ENEMY_EVENT_NUM:
                     # Create enemy
-                    new_enemy = Enemy(40, 40, 5*self.speed, 10*self.speed, 20, 100, self)
+                    new_enemy = Enemy(40*self.window_scale, 40*self.window_scale, 5*self.speed*self.window_scale, 10*self.speed*self.window_scale, 20*self.window_scale, 100*self.window_scale, self)
                     self.enemies.add(new_enemy)
                     self.all_sprites.add(new_enemy)
 
@@ -191,10 +193,10 @@ class Game():
             self.screen.blit(entity.surf, entity.rect)
     
         # Display fps
-        self.screen.blit(self.get_fps(), (5, 0))
+        self.screen.blit(self.get_fps(), (5*self.window_scale, 0*self.window_scale))
 
         # Display score
-        self.screen.blit(self.get_score(), (5, 20))
+        self.screen.blit(self.get_score(), (5*self.window_scale, 20*self.window_scale))
 
 
         if(self.display_visualization):

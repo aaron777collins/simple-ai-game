@@ -69,7 +69,7 @@ class Environment(py_environment.PyEnvironment):
                 #     np.array(create_input_data(self), dtype=np.float), reward=-1.0
                 # )
                 return ts.termination(
-                    np.array(create_input_data(self), dtype=np.float), reward=-float(self.game.score)/2
+                    np.array(create_input_data(self), dtype=np.float), reward=-1.0
                 )
             else:
                 # return self.reset()
